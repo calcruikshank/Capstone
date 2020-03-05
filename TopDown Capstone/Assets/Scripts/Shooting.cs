@@ -1,0 +1,221 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Shooting : MonoBehaviour
+{
+
+    public Transform firePoint;
+    
+    public Transform SnipePoint;
+    public GameObject bulletPrefab;
+    //public float bulletForce = 20f;
+    private float dashSpeed;
+    public int snipeDamage = 5;
+    public GameObject impactEffect;
+    public GameObject snipeAnimation;
+    public LineRenderer lineRenderer;
+    //private float chargeTimer;
+    
+
+
+    private State state;
+    private enum State
+    {
+        Normal,
+        Dashing,
+        Shooting,
+        Sniping
+    }
+
+    private void Awake()
+    {
+        state = State.Normal;
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        switch (state)
+        {
+            case State.Normal:
+                //i need handle dash in this class because i dont want to be able to shoot and dash at the same time theres gotta be an easier way
+                HandleDash();
+                HandleShoot();
+                break;
+
+            case State.Dashing:
+                HandleDashing();
+                break;
+
+            case State.Shooting:
+                HandleShooting(); 
+                break;
+
+            case State.Sniping:
+                HandleSniping();
+                
+                break;
+            
+        }
+        
+    }
+
+    private void HandleShoot()
+    {
+        if (Input.GetButtonDown("Fire1") && !PauseMenu.GameIsPaused)
+        {
+            state = State.Shooting;
+            Shoot();
+        }
+
+        //start charge 
+        if (Input.GetButtonDown("Fire2") && !PauseMenu.GameIsPaused)
+        {
+
+            state = State.Sniping;
+            StartCoroutine(Snipe());
+
+        } 
+        //once charge is greater than two seconds begin to shoot
+        
+
+    }
+
+
+    void HandleShooting()
+    {
+        //Debug.Log(state);
+        
+        if (Input.GetButtonUp("Fire1"))
+        {
+           
+            state = State.Normal;
+            //Debug.Log(state);
+            //Bullet.Detonate();
+        }
+        if (Input.GetButtonDown("Fire2"))
+        {
+
+            state = State.Sniping;
+            StartCoroutine (Snipe());
+            //Debug.Log(state);
+            //Bullet.Detonate();
+        }
+    }
+
+    void Shoot()
+    {
+
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        //Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+        
+        //rb.AddForce(firePoint.right * bulletForce, ForceMode2D.Impulse);
+    }
+
+    private void HandleDash()
+    {
+        if (Input.GetKeyDown("space"))
+        {
+            state = State.Dashing;
+            dashSpeed = 40;
+        }
+    }
+
+
+    private void HandleDashing()
+    {
+
+        dashSpeed -= dashSpeed * 10f * Time.deltaTime;
+
+        if (dashSpeed < 4f)
+        {
+            state = State.Normal;
+        }
+    }
+
+    void HandleSniping()
+    {
+        //Debug.Log(state);
+     
+        if (Input.GetButtonDown("Fire1"))
+        {
+            state = State.Shooting;
+            Shoot();
+            //Debug.Log(state);
+            //Bullet.Detonate();
+        }
+        
+    }
+
+    IEnumerator Snipe()
+    {
+       
+        
+        //Debug.Log("Sniped");
+        GameObject effect = Instantiate(snipeAnimation, SnipePoint.position, SnipePoint.rotation);
+        //have the raycast ignore layer 13 and 11
+        int layerMask = 1 << 11 | 1<<13;
+        layerMask = ~layerMask;
+        
+        RaycastHit2D hitInfo = Physics2D.Raycast(firePoint.position, firePoint.right, Mathf.Infinity, layerMask);
+        
+        Destroy(effect, .3f);
+        
+
+
+        if (hitInfo)
+        {
+
+            //Debug.Log(hitInfo.transform.name);
+            Enemy enemy = hitInfo.transform.GetComponent<Enemy>();
+            
+            if(enemy!= null)
+            {
+                enemy.TakeDamage(snipeDamage);
+                var locationOfImpact = transform.position;
+                enemy.Knockback(snipeDamage, locationOfImpact.x, locationOfImpact.y);
+            }
+
+            ExplosionEnemyBullet enemyBullet = hitInfo.transform.GetComponent<ExplosionEnemyBullet>();
+            
+            if (enemyBullet != null)
+            {
+                //holy shit it worked
+                enemyBullet.Detonate();
+            }
+
+            //impact animation instantiated
+            GameObject impact = Instantiate(impactEffect, hitInfo.point, firePoint.rotation);
+            //impact deleted after x seconds
+            Destroy(impact, .6f);
+            lineRenderer.SetPosition(0, firePoint.position);
+            lineRenderer.SetPosition(1, hitInfo.point);
+            Debug.Log(firePoint.rotation);
+
+
+        }
+        else {
+            //this makes the line go on for a while
+            lineRenderer.SetPosition(0, firePoint.position);
+            lineRenderer.SetPosition(1, firePoint.position + firePoint.right * 100);
+
+        }
+
+       
+        
+        lineRenderer.enabled = true;
+        //wait a frame
+        //yield return 0;
+        yield return new WaitForSeconds(.01f);
+        lineRenderer.enabled = false;
+
+        state = State.Normal;
+       
+        
+        
+    }
+
+
+}
