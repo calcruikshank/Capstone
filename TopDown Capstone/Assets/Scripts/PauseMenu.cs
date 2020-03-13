@@ -7,12 +7,19 @@ public class PauseMenu : MonoBehaviour
 {
     public static bool GameIsPaused = false;
     public GameObject pauseMenuUI;
-
+    public static bool GameHasStarted = false;
+    public GameObject startGameUI;
 
     // Update is called once per frame
     void Awake()
     {
         GameIsPaused = false;
+        //GameHasStarted = false;
+    }
+
+    void Start()
+    {
+        GameStart();
     }
     void Update()
     {
@@ -27,11 +34,21 @@ public class PauseMenu : MonoBehaviour
                 Pause();
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.D))
+        {
+            Resume();
+            GameHasStarted = true;
+            //GameIsPaused = false;
+        }
+
+
     }
 
     public void Resume()
     {
         pauseMenuUI.SetActive(false);
+        startGameUI.SetActive(false);
         Time.timeScale = 1f;
         GameIsPaused = false;
     }
@@ -41,7 +58,7 @@ public class PauseMenu : MonoBehaviour
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
         GameIsPaused = true;
-
+        startGameUI.SetActive(false);
     }
 
     public void LoadMenu()
@@ -55,4 +72,13 @@ public class PauseMenu : MonoBehaviour
         Debug.Log("Quit");
         Application.Quit();
     }
+
+    public void GameStart()
+    {
+        startGameUI.SetActive(true);
+        Time.timeScale = 0f;
+        GameIsPaused = true;
+        GameHasStarted = false;
+    }
+
 }

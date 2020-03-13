@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExplosionDamage : MonoBehaviour
+public class PlayerExplosion : MonoBehaviour
 {
-
     public int damage = 10;
     public CircleCollider2D m_Collider;
-    
+
 
     void Start()
     {
-        
+
         //starts coroutine for .1 seconds on the instantiation of explosion
         StartCoroutine(waitForSec(.1f));
     }
@@ -19,25 +18,24 @@ public class ExplosionDamage : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       
+
         //destroys the game object after 3 seconds gameobject in this case is the explosion
         Destroy(gameObject, .3f);
-        
     }
 
-    void OnTriggerEnter2D (Collider2D hitInfo)
+    void OnTriggerEnter2D(Collider2D hitInfo)
     {
         var locationOfExplosion = transform.position;
         //Debug.Log(locationOfExplosion);
         //Debug.Log(hitInfo.name);
         //I am a god damn genius
-        Enemy enemy = hitInfo.GetComponent<Enemy>();
-        if (enemy != null)
+        PlayerController player = hitInfo.GetComponent<PlayerController>();
+        if (player != null)
         {
 
-            enemy.TakeDamage(damage);
+            player.TakeDamage(damage);
             //i seriously dont think i can pass a vector
-            enemy.Knockback(damage, locationOfExplosion.x, locationOfExplosion.y);
+            player.Knockback(damage, locationOfExplosion.x, locationOfExplosion.y);
         }
     }
     private IEnumerator waitForSec(float sec)

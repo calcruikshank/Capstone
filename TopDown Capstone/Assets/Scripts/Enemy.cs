@@ -17,6 +17,8 @@ public class Enemy : MonoBehaviour
     public GameObject bulletPrefab;
     public float startTimeBetweenShots;
     private float timeBetweenShots;
+    public GameObject knockbackAnim;
+
 
 
     private State state;
@@ -29,6 +31,7 @@ public class Enemy : MonoBehaviour
     private void Awake()
     {
         state = State.Normal;
+        Physics2D.IgnoreLayerCollision(15, 16, true);
     }
 
     void Start()
@@ -38,17 +41,27 @@ public class Enemy : MonoBehaviour
         
         //this will spawn one bullet on start making sure it works
         //put spawner in handle ai later
-        Shoot();
+        //Shoot();
     }
 
 
     void Update()
     {
+        
         switch (state)
         {
             case State.Normal:
                 HandleAI();
                 break;
+            
+
+        }
+    }
+    void FixedUpdate()
+    {
+        switch (state)
+        {
+            
             case State.Knockback:
                 BeingKnocked();
                 break;
@@ -86,13 +99,19 @@ public class Enemy : MonoBehaviour
         //Debug.Log(locationOfExplosionY);
         //Debug.Log(rb.position.y);
         //rb.AddForce(10, 10, ForceMode2D.Impulse);
-        knockbackValue = damage * 2;
+        //knockbackValue = damage * 2;
+
+        //knockback that scales
+        knockbackValue = (14 * ((currentPercentage + damage) * (damage / 3)) / 180) + 7;
+        
+        //Debug.Log(knockbackValue);
         //ill figure out the specifics later but this adds force in the opposite direction of the explosion
         knockDir = direction;
     }
 
     public void BeingKnocked()
     {
+        GameObject effect = Instantiate(knockbackAnim, transform.position, firePoint.rotation);
         transform.position += -knockDir * knockbackValue * Time.deltaTime;
         //rb.AddForce(-direction * 10, ForceMode2D.Impulse);
         knockbackValue -= knockbackValue * 3f * Time.deltaTime;
@@ -105,6 +124,7 @@ public class Enemy : MonoBehaviour
 
     public void HandleAI()
     {
+
         //Debug.Log(state);
         if(timeBetweenShots<= 0)
         {

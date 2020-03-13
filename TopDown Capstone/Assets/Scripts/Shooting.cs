@@ -9,14 +9,15 @@ public class Shooting : MonoBehaviour
     
     public Transform SnipePoint;
     public GameObject bulletPrefab;
-    //public float bulletForce = 20f;
+    //public float bulletForce = 2f;
     private float dashSpeed;
     public int snipeDamage = 5;
     public GameObject impactEffect;
     public GameObject snipeAnimation;
     public LineRenderer lineRenderer;
+    public CameraShake cameraShake;
     //private float chargeTimer;
-    
+
 
 
     private State state;
@@ -90,7 +91,7 @@ public class Shooting : MonoBehaviour
         
         if (Input.GetButtonUp("Fire1"))
         {
-           
+            StartCoroutine(cameraShake.Shake(.15f, .05f));
             state = State.Normal;
             //Debug.Log(state);
             //Bullet.Detonate();
@@ -112,6 +113,7 @@ public class Shooting : MonoBehaviour
         //Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         
         //rb.AddForce(firePoint.right * bulletForce, ForceMode2D.Impulse);
+        
     }
 
     private void HandleDash()
@@ -155,8 +157,9 @@ public class Shooting : MonoBehaviour
         
         //Debug.Log("Sniped");
         GameObject effect = Instantiate(snipeAnimation, SnipePoint.position, SnipePoint.rotation);
-        //have the raycast ignore layer 13 and 11
-        int layerMask = 1 << 11 | 1<<13;
+        //have the raycast ignore layer 13 and 11 and 16 which is the ally bullet and deathline
+        int layerMask = 1 << 11 | 1<<13 | 1 << 16;
+        
         layerMask = ~layerMask;
         
         RaycastHit2D hitInfo = Physics2D.Raycast(firePoint.position, firePoint.right, Mathf.Infinity, layerMask);
@@ -167,7 +170,7 @@ public class Shooting : MonoBehaviour
 
         if (hitInfo)
         {
-
+            StartCoroutine(cameraShake.Shake(.15f, .05f));
             //Debug.Log(hitInfo.transform.name);
             Enemy enemy = hitInfo.transform.GetComponent<Enemy>();
             
@@ -192,7 +195,7 @@ public class Shooting : MonoBehaviour
             Destroy(impact, .6f);
             lineRenderer.SetPosition(0, firePoint.position);
             lineRenderer.SetPosition(1, hitInfo.point);
-            Debug.Log(firePoint.rotation);
+            //Debug.Log(firePoint.rotation);
 
 
         }

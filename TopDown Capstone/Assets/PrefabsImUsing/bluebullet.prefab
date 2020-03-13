@@ -215,5 +215,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
-  explosionEffect: {fileID: 7009841515080817405, guid: c07092a880faf324d81a06fd79ecce3d,
+  explosionEffect: {fileID: 775602474591215685, guid: abeacc07931d8a94c8860b251cea1610,
     type: 3}
