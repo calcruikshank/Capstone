@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 public class Enemy : MonoBehaviour
 {
@@ -18,24 +18,36 @@ public class Enemy : MonoBehaviour
     public float startTimeBetweenShots;
     private float timeBetweenShots;
     public GameObject knockbackAnim;
-
-
+    public CameraShake cameraShake;
+    public DeathZone deathZone;
+    public int stocksLeft = 3;
+    public Vector3 originalPos;
+    public GameObject stock0;
+    public GameObject stock1;
+    public GameObject stock2;
+    public bool Respawning = false;
+    public float respawn_timer = 0f;
+    public float TimeIWantInSeconds = 3f;
+    public GameObject respawnEffect;
 
     private State state;
     private enum State
     {
         Normal,
-        Knockback
+        Knockback, 
+        Respawning
     }
 
     private void Awake()
     {
         state = State.Normal;
-        Physics2D.IgnoreLayerCollision(15, 16, true);
+        Respawning = false;
+        
     }
 
     void Start()
     {
+        originalPos = (gameObject.transform.position);
         timeBetweenShots = startTimeBetweenShots;
         damagePercentBlue.SetStartingPercent(currentPercentage);
         
@@ -53,10 +65,40 @@ public class Enemy : MonoBehaviour
             case State.Normal:
                 HandleAI();
                 break;
-            
+            case State.Respawning:
+                HandleRespawn();
+                break;
 
         }
+        if (deathZone.BluePlayerLostStock)
+        {
+            LoseStock();
+        }
+
+        if (stocksLeft == 0)
+        {
+            stock0.SetActive(false);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+        }
+        if (stocksLeft == 2)
+        {
+            stock2.SetActive(false);
+        }
+        if (stocksLeft == 1)
+        {
+            stock1.SetActive(false);
+        }
+
+        if (Respawning == true)
+        {
+            gameObject.transform.position = originalPos;
+        }
+        
+        
+
+
     }
+
     void FixedUpdate()
     {
         switch (state)
@@ -124,7 +166,8 @@ public class Enemy : MonoBehaviour
 
     public void HandleAI()
     {
-
+        respawnEffect.SetActive(false);
+        respawn_timer = 0f;
         //Debug.Log(state);
         if(timeBetweenShots<= 0)
         {
@@ -137,6 +180,7 @@ public class Enemy : MonoBehaviour
             timeBetweenShots -= Time.deltaTime;
             
         }
+        
     }
 
     void Shoot()
@@ -146,6 +190,45 @@ public class Enemy : MonoBehaviour
         //Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
 
         //rb.AddForce(firePoint.right * bulletForce, ForceMode2D.Impulse);
+    }
+
+    public void LoseStock()
+    {
+        StartCoroutine(cameraShake.Shake(.15f, .05f));
+        Debug.Log("Lost a Stock");
+        //Destroy(gameObject);
+        deathZone.ResetTimer();
+        GameObject effect = Instantiate(deathEffect, transform.position, firePoint.rotation);
+        Destroy(effect, .6f);
+        deathZone.BluePlayerLostStock = false;
+
+        Respawning = true;
+        
+        state = State.Respawning;
+        //change ai target to spawn
+        gameObject.transform.position = originalPos;
+        stocksLeft--;
+        damagePercentBlue.SetStartingPercent(0);
+        currentPercentage = 0;
+    }
+
+    public void HandleRespawn()
+    {
+        respawnEffect.SetActive(true);
+        //set invulenerability enemy to explosion
+        //i do this in shooting
+        //Physics2D.IgnoreLayerCollision(13, 14, false);
+
+        //make a timer to count to x seconds
+        respawn_timer += Time.deltaTime;
+
+        Debug.Log(respawn_timer);
+        //once timer is greater than 3 then set Respawning to false
+        if (respawn_timer > TimeIWantInSeconds)
+        {
+            Respawning = false;
+            state = State.Normal;
+        }
     }
 
 }

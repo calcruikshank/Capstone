@@ -10,7 +10,7 @@ public class DamagePercentBlue : MonoBehaviour
 
     public void SetStartingPercent(int percent)
     {
-
+        txt.text = (percent.ToString()) + "%";
     }
     public void SetPercent(int percentage)
     {

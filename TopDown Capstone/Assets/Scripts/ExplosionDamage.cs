@@ -32,7 +32,7 @@ public class ExplosionDamage : MonoBehaviour
         //Debug.Log(hitInfo.name);
         //I am a god damn genius
         Enemy enemy = hitInfo.GetComponent<Enemy>();
-        if (enemy != null)
+        if (enemy != null && !enemy.Respawning)
         {
 
             enemy.TakeDamage(damage);

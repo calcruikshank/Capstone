@@ -25,12 +25,17 @@ public class Bullet : MonoBehaviour
 
     void Start()
     {
+
         Vector3 mousePosition = Input.mousePosition;
         mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
 
-        //holy shit this is fun
+        
         Vector2 directionOnCreation = new Vector2(mousePosition.x - transform.position.x, mousePosition.y - transform.position.y);
         //directionOnCreation = directionOnCreation.normalized;
+
+        
+
+
         //Debug.Log(directionOnCreation);
 
     }
@@ -40,7 +45,7 @@ public class Bullet : MonoBehaviour
         Vector3 mousePosition = Input.mousePosition;
         mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
 
-        //holy shit this is fun
+        
         Vector2 direction = new Vector2(mousePosition.x - transform.position.x, mousePosition.y - transform.position.y);
         direction = direction.normalized;
         //Vector2 direction = new Vector2(directionUpdated.x - directionOnCreation.x, directionUpdated.y - directionOnCreation.y);

@@ -11,7 +11,7 @@ public class Shooting : MonoBehaviour
     public GameObject bulletPrefab;
     //public float bulletForce = 2f;
     private float dashSpeed;
-    public int snipeDamage = 5;
+    public int snipeDamage = 3;
     public GameObject impactEffect;
     public GameObject snipeAnimation;
     public LineRenderer lineRenderer;
@@ -26,7 +26,8 @@ public class Shooting : MonoBehaviour
         Normal,
         Dashing,
         Shooting,
-        Sniping
+        Sniping, 
+        
     }
 
     private void Awake()
@@ -170,15 +171,15 @@ public class Shooting : MonoBehaviour
 
         if (hitInfo)
         {
-            StartCoroutine(cameraShake.Shake(.15f, .05f));
+            //StartCoroutine(cameraShake.Shake(.15f, .05f));
             //Debug.Log(hitInfo.transform.name);
             Enemy enemy = hitInfo.transform.GetComponent<Enemy>();
             
-            if(enemy!= null)
+            if(enemy!= null && !enemy.Respawning)
             {
                 enemy.TakeDamage(snipeDamage);
                 var locationOfImpact = transform.position;
-                enemy.Knockback(snipeDamage, locationOfImpact.x, locationOfImpact.y);
+                //enemy.Knockback(snipeDamage, locationOfImpact.x, locationOfImpact.y);
             }
 
             ExplosionEnemyBullet enemyBullet = hitInfo.transform.GetComponent<ExplosionEnemyBullet>();

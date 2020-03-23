@@ -13,6 +13,7 @@ public class ExplosionEnemyBullet : MonoBehaviour
     {
         //need to ignore layer enemy and enemy bullet on awake start
         Physics2D.IgnoreLayerCollision(14, 15, true);
+        Physics2D.IgnoreLayerCollision(15, 16, true);
     }
     void Start()
     {

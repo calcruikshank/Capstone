@@ -30,7 +30,7 @@ public class PlayerExplosion : MonoBehaviour
         //Debug.Log(hitInfo.name);
         //I am a god damn genius
         PlayerController player = hitInfo.GetComponent<PlayerController>();
-        if (player != null)
+        if (player != null && !player.Respawning)
         {
 
             player.TakeDamage(damage);
