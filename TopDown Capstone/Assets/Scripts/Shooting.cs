@@ -17,8 +17,9 @@ public class Shooting : MonoBehaviour
     public LineRenderer lineRenderer;
     public CameraShake cameraShake;
     //private float chargeTimer;
-
-
+    public float fireRate = 15f;
+    private float nextFire = 0f;
+    public static float ammo = 0f; //accessed in explosion damage line 39
 
     private State state;
     private enum State
@@ -66,21 +67,22 @@ public class Shooting : MonoBehaviour
 
     private void HandleShoot()
     {
-        if (Input.GetButtonDown("Fire1") && !PauseMenu.GameIsPaused)
+        if (Input.GetButtonDown("Fire2") && !PauseMenu.GameIsPaused)
         {
             state = State.Shooting;
             Shoot();
         }
 
-        //start charge 
-        if (Input.GetButtonDown("Fire2") && !PauseMenu.GameIsPaused)
+        
+        if (Input.GetButtonDown("Fire1") && !PauseMenu.GameIsPaused)
         {
 
             state = State.Sniping;
-            StartCoroutine(Snipe());
-
+            
+            
+            
         } 
-        //once charge is greater than two seconds begin to shoot
+        
         
 
     }
@@ -90,14 +92,14 @@ public class Shooting : MonoBehaviour
     {
         //Debug.Log(state);
         
-        if (Input.GetButtonUp("Fire1"))
+        if (Input.GetButtonUp("Fire2"))
         {
             StartCoroutine(cameraShake.Shake(.15f, .05f));
             state = State.Normal;
             //Debug.Log(state);
             //Bullet.Detonate();
         }
-        if (Input.GetButtonDown("Fire2"))
+        if (Input.GetButtonDown("Fire1"))
         {
 
             state = State.Sniping;
@@ -141,21 +143,30 @@ public class Shooting : MonoBehaviour
     void HandleSniping()
     {
         //Debug.Log(state);
-     
-        if (Input.GetButtonDown("Fire1"))
+        
+        if (Input.GetButtonDown("Fire2"))
         {
             state = State.Shooting;
             Shoot();
             //Debug.Log(state);
             //Bullet.Detonate();
         }
+        if (Input.GetButtonUp("Fire1"))
+        {
+            state = State.Normal;
+        }
+        if (Time.time >= nextFire && ammo < 5)
+        {
+            StartCoroutine(Snipe());
+            
+        }
         
     }
 
     IEnumerator Snipe()
     {
-       
-        
+        ammo++;
+        nextFire = Time.time + 1f / fireRate;
         //Debug.Log("Sniped");
         GameObject effect = Instantiate(snipeAnimation, SnipePoint.position, SnipePoint.rotation);
         //have the raycast ignore layer 13 and 11 and 16 which is the ally bullet and deathline
@@ -179,14 +190,14 @@ public class Shooting : MonoBehaviour
             {
                 enemy.TakeDamage(snipeDamage);
                 var locationOfImpact = transform.position;
-                //enemy.Knockback(snipeDamage, locationOfImpact.x, locationOfImpact.y);
+                enemy.Knockback(snipeDamage, locationOfImpact.x, locationOfImpact.y);
             }
 
             ExplosionEnemyBullet enemyBullet = hitInfo.transform.GetComponent<ExplosionEnemyBullet>();
             
             if (enemyBullet != null)
             {
-                //holy shit it worked
+                
                 enemyBullet.Detonate();
             }
 
@@ -207,18 +218,20 @@ public class Shooting : MonoBehaviour
 
         }
 
-       
+        
         
         lineRenderer.enabled = true;
         //wait a frame
         //yield return 0;
         yield return new WaitForSeconds(.01f);
         lineRenderer.enabled = false;
+        
 
-        state = State.Normal;
+        
+
        
-        
-        
+
+
     }
 
 

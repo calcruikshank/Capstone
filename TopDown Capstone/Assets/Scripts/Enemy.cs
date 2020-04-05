@@ -29,6 +29,7 @@ public class Enemy : MonoBehaviour
     public float respawn_timer = 0f;
     public float TimeIWantInSeconds = 3f;
     public GameObject respawnEffect;
+    
 
     private State state;
     private enum State
@@ -78,7 +79,7 @@ public class Enemy : MonoBehaviour
         if (stocksLeft == 0)
         {
             stock0.SetActive(false);
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+            SceneManager.LoadScene("VictoryScreen");
         }
         if (stocksLeft == 2)
         {
@@ -120,7 +121,6 @@ public class Enemy : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     public void Knockback(int damage, float locationOfExplosionX, float locationOfExplosionY)
     {
         state = State.Knockback;
@@ -132,9 +132,8 @@ public class Enemy : MonoBehaviour
         //Vector2 direction = new Vector2(mousePosition.x - transform.position.x, mousePosition.y - transform.position.y);
         //transform.right = direction;
 
-        //distance between explosion position and rigidbody(bluePlayer)
-        Vector3 direction = new Vector2(locationOfExplosionX - rb.position.x, locationOfExplosionY - rb.position.y);
-        //Debug.Log("WOrked");
+        Vector3 direction = new Vector2(locationOfExplosionX - rb.position.x, locationOfExplosionY - rb.position.y); //distance between explosion position and rigidbody(bluePlayer)
+
         //Debug.Log(currentPercentage + "%");
         direction = direction.normalized;
         //Debug.Log(direction);
@@ -143,11 +142,11 @@ public class Enemy : MonoBehaviour
         //rb.AddForce(10, 10, ForceMode2D.Impulse);
         //knockbackValue = damage * 2;
 
-        //knockback that scales
-        knockbackValue = (14 * ((currentPercentage + damage) * (damage / 3)) / 180) + 7;
         
+        knockbackValue = (14 * ((currentPercentage + damage) * (damage / 3)) / 180) + 7; //knockback that scales
+
         //Debug.Log(knockbackValue);
-        //ill figure out the specifics later but this adds force in the opposite direction of the explosion
+       
         knockDir = direction;
     }
 

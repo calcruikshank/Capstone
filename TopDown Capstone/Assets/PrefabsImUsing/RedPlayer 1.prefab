@@ -277,9 +277,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firePoint: {fileID: 5137784033011542849}
+  SnipePoint: {fileID: 0}
   bulletPrefab: {fileID: 5248640531195202363, guid: ca1e12ef64935bd4aab462a642f6b6e9,
     type: 3}
-  bulletForce: 30
+  snipeDamage: 25
+  impactEffect: {fileID: 0}
+  snipeAnimation: {fileID: 0}
+  lineRenderer: {fileID: 0}
 --- !u!50 &5137784032792472507
 Rigidbody2D:
   serializedVersion: 4
@@ -326,7 +330,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5137784032792472509}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc3e803940a59e649be30a0dbec00e5e, type: 3}
+  m_Script: {fileID: 11500000, guid: 8258b3dfc58a2de43949c31a4cc09293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5

@@ -7,7 +7,7 @@ public class ExplosionDamage : MonoBehaviour
 
     public int damage = 10;
     public CircleCollider2D m_Collider;
-    
+   
 
     void Start()
     {
@@ -28,13 +28,11 @@ public class ExplosionDamage : MonoBehaviour
     void OnTriggerEnter2D (Collider2D hitInfo)
     {
         var locationOfExplosion = transform.position;
-        //Debug.Log(locationOfExplosion);
-        //Debug.Log(hitInfo.name);
-        //I am a god damn genius
+
         Enemy enemy = hitInfo.GetComponent<Enemy>();
         if (enemy != null && !enemy.Respawning)
         {
-
+            Shooting.ammo = 0; //resets ammo to zero when theres a collision with the enemy
             enemy.TakeDamage(damage);
             //i seriously dont think i can pass a vector
             enemy.Knockback(damage, locationOfExplosion.x, locationOfExplosion.y);

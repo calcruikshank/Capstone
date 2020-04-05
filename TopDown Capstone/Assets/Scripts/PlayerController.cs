@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
         if (stocksLeft == 0)
         {
             stock0.SetActive(false);
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+            SceneManager.LoadScene("DefeatScreen");
         }
         if (stocksLeft == 2)
         {

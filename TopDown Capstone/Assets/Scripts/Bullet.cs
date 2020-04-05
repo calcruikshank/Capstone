@@ -54,7 +54,7 @@ public class Bullet : MonoBehaviour
 
         rb.AddForce(direction / 5, ForceMode2D.Impulse);
 
-        if (Input.GetButtonUp("Fire1"))
+        if (Input.GetButtonUp("Fire2"))
             {
                 
                 Detonate();
@@ -70,13 +70,6 @@ public class Bullet : MonoBehaviour
         //destorys the explosion after 5 seconds
         
 
-        //send damage and location of explosion to Enemy.TakeDamage() function
-        //Enemy enemy = hitInfo.transform.GetComponent<Enemy>();
-        //if (enemy != null)
-        //{
-        //enemy.TakeDamage(explosionDamage);
-        //enemy.Knockback(explosionDamage, locationOfBullet);
-        //}
     }
 
     
